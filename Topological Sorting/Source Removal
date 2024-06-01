@@ -1,0 +1,66 @@
+#include <stdio.h>
+
+#define N 6
+
+int a[N][N];
+int t[N];
+int top = -1;
+int stack[N];
+int z = 0;
+
+void tp_sr(int a[N][N], int t[N]) {
+    int indegree[N] = {0};
+
+    // Compute the indegree of each vertex
+    for (int j = 0; j < N; j++) {
+        int sum = 0;
+        for (int i = 0; i < N; i++) {
+            sum += a[i][j];
+        }
+        indegree[j] = sum;
+    }
+
+    // Push vertices with indegree 0 to the stack
+    for (int i = 0; i < N; i++) {
+        if (indegree[i] == 0) {
+            stack[++top] = i;
+        }
+    }
+
+    while (top != -1) {
+        int u = stack[top--];  // Pop vertex from stack
+        t[z++] = u;            // Add vertex to solution vector
+
+        // Decrease the indegree of adjacent vertices
+        for (int v = 0; v < N; v++) {
+            if (a[u][v] == 1) {
+                indegree[v]--;
+                if (indegree[v] == 0) {
+                    stack[++top] = v;  // Push vertex to stack if indegree is 0
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int n = N;
+
+    int a[6][6] = {
+        {0, 0, 0, 0, 0, 0},  // Node 0
+        {0, 0, 0, 1, 0, 0},  // Node 1
+        {0, 0, 0, 1, 0, 0},  // Node 2
+        {0, 0, 0, 0, 0, 0},  // Node 3
+        {1, 1, 0, 0, 0, 0},  // Node 4
+        {1, 0, 1, 0, 0, 0}   // Node 5
+    };
+
+    tp_sr(a, t);
+
+    printf("JOBS order:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t", t[i]);
+    }
+
+    return 0;
+}
